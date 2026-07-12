@@ -16,7 +16,11 @@ function defaultSettings(): AppSettings {
   return { childName: 'Mine', startDate: start, endDate: addDays(start, DEFAULT_SUMMER_LENGTH_DAYS) };
 }
 
-function freshState(settings: AppSettings, avatar: AvatarConfig = DEFAULT_AVATAR_CONFIG): AppState {
+function freshState(
+  settings: AppSettings,
+  avatar: AvatarConfig = DEFAULT_AVATAR_CONFIG,
+  readBooks: Record<string, boolean> = {},
+): AppState {
   const { tasks, weeks } = generateSchedule(settings.startDate, settings.endDate);
   return {
     settings,
@@ -25,12 +29,14 @@ function freshState(settings: AppSettings, avatar: AvatarConfig = DEFAULT_AVATAR
     gamification: { totalPoints: 0, completedCount: 0 },
     lastRolloverDate: todayISO(),
     avatar,
+    readBooks,
   };
 }
 
 interface AppContextValue {
   state: AppState;
   toggleTask: (id: string) => void;
+  toggleBookRead: (id: string) => void;
   updateSettings: (settings: AppSettings) => void;
   updateAvatar: (avatar: AvatarConfig) => void;
   resetProgress: () => void;
@@ -57,6 +63,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         settings: rolled.settings,
         lastRolloverDate: today,
         avatar: base.avatar ?? DEFAULT_AVATAR_CONFIG,
+        readBooks: base.readBooks ?? {},
       };
       setState(initial);
       saveState(initial);
@@ -109,15 +116,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateSettings = useCallback((settings: AppSettings) => {
-    setState((prev) => freshState(settings, prev?.avatar));
+    setState((prev) => freshState(settings, prev?.avatar, prev?.readBooks));
   }, []);
 
   const updateAvatar = useCallback((avatar: AvatarConfig) => {
     setState((prev) => (prev ? { ...prev, avatar } : prev));
   }, []);
 
+  const toggleBookRead = useCallback((id: string) => {
+    setState((prev) => {
+      if (!prev) return prev;
+      const read = !prev.readBooks[id];
+      return { ...prev, readBooks: { ...prev.readBooks, [id]: read } };
+    });
+  }, []);
+
   const resetProgress = useCallback(() => {
-    setState((prev) => freshState(prev ? prev.settings : defaultSettings(), prev?.avatar));
+    setState((prev) => freshState(prev ? prev.settings : defaultSettings(), prev?.avatar, prev?.readBooks));
   }, []);
 
   const clearMotivationEvent = useCallback(() => setMotivationEvent(null), []);
@@ -134,6 +149,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const value: AppContextValue = {
     state,
     toggleTask,
+    toggleBookRead,
     updateSettings,
     updateAvatar,
     resetProgress,
