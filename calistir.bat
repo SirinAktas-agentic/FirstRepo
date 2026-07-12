@@ -30,11 +30,15 @@ if errorlevel 1 (
 )
 
 echo.
-echo Kurulum tamamlandi. Uygulama baslatiliyor...
-echo Birazdan bir QR kod gorunecek. Telefonuna "Expo Go" uygulamasini
-echo indirip o QR kodu okutabilirsin.
+echo Kurulum tamamlandi. Uygulama tarayicida baslatiliyor...
+echo Birazdan bilgisayarinizin tarayicisinda (Chrome/Edge) otomatik
+echo olarak bir sekme acilacak. Acilmazsa http://localhost:8081
+echo adresini tarayiciya elle yazabilirsiniz.
+echo.
+echo Bu pencereyi KAPATMAYIN - uygulama acikken bu pencere de acik
+echo kalmali. Uygulamayi kapatmak icin bu pencerede Ctrl+C'ye basin.
 echo.
 
-call npm start
+call npx expo start --web
 
 pause

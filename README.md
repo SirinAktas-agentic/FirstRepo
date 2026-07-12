@@ -12,25 +12,28 @@
 
 ## Çalıştırma
 
+Uygulama en sorunsuz şekilde **bilgisayarın tarayıcısında** çalışır (mobil cihazda Expo Go sürüm uyumluluğu sorunlarıyla uğraşmamak için önerilen yol budur).
+
 ### Windows'ta kolay yol (terminal bilmeden)
 
 1. Bu klasörü indirip aç.
 2. İçindeki **`calistir.bat`** dosyasına çift tıkla.
 3. Node.js kurulu değilse ekrandaki uyarıyı takip ederek [nodejs.org](https://nodejs.org)'dan LTS sürümünü kur, sonra dosyaya tekrar çift tıkla.
-4. Kurulum bitince ekranda bir QR kod belirecek; telefonuna **Expo Go** uygulamasını (App Store/Google Play) kurup o QR kodu okut.
+4. Kurulum bitince tarayıcında otomatik olarak bir sekme açılacak (açılmazsa `http://localhost:8081` adresine git). Pencereyi kapatmadığın sürece uygulama açık kalır.
 
 ### Terminalden manuel çalıştırma
 
 ```bash
 npm install
-npm start        # Expo geliştirme sunucusunu başlatır
+npm run web       # Tarayıcıda açar (http://localhost:8081)
 ```
 
-Açılan QR kodu telefonunda **Expo Go** uygulamasıyla okutarak (iOS/Android) uygulamayı canlı görebilirsin. Alternatif olarak:
+Mobil cihazda Expo Go ile denemek istersen (mağazadaki Expo Go sürümüyle projenin Expo SDK sürümü eşleşmelidir):
 
 ```bash
-npm run android  # Android emülatöründe çalıştırır
-npm run ios      # iOS simülatöründe çalıştırır (yalnızca macOS)
+npm start         # QR kod ile Expo Go üzerinden çalıştırır
+npm run android   # Android emülatöründe çalıştırır
+npm run ios       # iOS simülatöründe çalıştırır (yalnızca macOS)
 ```
 
 ## Proje yapısı
