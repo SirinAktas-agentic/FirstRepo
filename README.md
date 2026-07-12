@@ -12,6 +12,15 @@
 
 ## Çalıştırma
 
+### Windows'ta kolay yol (terminal bilmeden)
+
+1. Bu klasörü indirip aç.
+2. İçindeki **`calistir.bat`** dosyasına çift tıkla.
+3. Node.js kurulu değilse ekrandaki uyarıyı takip ederek [nodejs.org](https://nodejs.org)'dan LTS sürümünü kur, sonra dosyaya tekrar çift tıkla.
+4. Kurulum bitince ekranda bir QR kod belirecek; telefonuna **Expo Go** uygulamasını (App Store/Google Play) kurup o QR kodu okut.
+
+### Terminalden manuel çalıştırma
+
 ```bash
 npm install
 npm start        # Expo geliştirme sunucusunu başlatır
