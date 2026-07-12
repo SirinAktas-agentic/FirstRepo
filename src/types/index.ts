@@ -34,12 +34,20 @@ export interface MotivationEvent {
   newLevel?: number;
 }
 
+export type HairStyle = 'kisa' | 'uzun' | 'atkuyrugu' | 'orgu';
+
+export interface AvatarConfig {
+  hairColor: string;
+  hairStyle: HairStyle;
+}
+
 export interface AppState {
   settings: AppSettings;
   tasks: Record<string, AgendaTask>;
   weeks: WeekPlan[];
   gamification: GamificationState;
   lastRolloverDate: string;
+  avatar: AvatarConfig;
 }
 
 export const POINTS_PER_TASK = 5;

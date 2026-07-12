@@ -1,12 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { AvatarConfig } from '../types';
 
 interface AvatarViewProps {
   level: number;
   size?: number;
+  avatar: AvatarConfig;
 }
-
-const HAIR_COLORS = ['#7C4A25', '#5B3A29', '#C2410C', '#9333EA', '#DB2777', '#0EA5E9', '#16A34A'];
 
 function accessoryForLevel(level: number): string | null {
   if (level >= 7) return '👑';
@@ -15,13 +15,79 @@ function accessoryForLevel(level: number): string | null {
   return null;
 }
 
-export default function AvatarView({ level, size = 120 }: AvatarViewProps) {
-  const hairColor = HAIR_COLORS[(level - 1) % HAIR_COLORS.length];
+export default function AvatarView({ level, size = 120, avatar }: AvatarViewProps) {
+  const hairColor = avatar.hairColor;
+  const hairStyle = avatar.hairStyle;
   const accessory = accessoryForLevel(level);
   const scale = size / 120;
 
   return (
     <View style={[styles.wrapper, { width: size, height: size * 1.05 }]}>
+      {hairStyle === 'uzun' ? (
+        <>
+          <View
+            style={[
+              styles.longHairSide,
+              {
+                left: size * 0.02,
+                top: size * 0.14,
+                width: size * 0.16,
+                height: size * 0.62,
+                borderRadius: size * 0.08,
+                backgroundColor: hairColor,
+              },
+            ]}
+          />
+          <View
+            style={[
+              styles.longHairSide,
+              {
+                right: size * 0.02,
+                top: size * 0.14,
+                width: size * 0.16,
+                height: size * 0.62,
+                borderRadius: size * 0.08,
+                backgroundColor: hairColor,
+              },
+            ]}
+          />
+        </>
+      ) : null}
+
+      {hairStyle === 'atkuyrugu' ? (
+        <View
+          style={[
+            styles.ponytail,
+            {
+              right: -size * 0.06,
+              top: size * 0.2,
+              width: size * 0.14,
+              height: size * 0.42,
+              borderRadius: size * 0.07,
+              backgroundColor: hairColor,
+              transform: [{ rotate: '18deg' }],
+            },
+          ]}
+        />
+      ) : null}
+
+      {hairStyle === 'orgu' ? (
+        <View
+          style={[
+            styles.braid,
+            {
+              left: size * 0.08,
+              top: size * 0.34,
+              width: size * 0.1,
+              height: size * 0.5,
+              borderRadius: size * 0.05,
+              backgroundColor: hairColor,
+              transform: [{ rotate: '8deg' }],
+            },
+          ]}
+        />
+      ) : null}
+
       <View
         style={[
           styles.hair,
@@ -84,6 +150,15 @@ const styles = StyleSheet.create({
   hair: {
     position: 'absolute',
     alignSelf: 'center',
+  },
+  longHairSide: {
+    position: 'absolute',
+  },
+  ponytail: {
+    position: 'absolute',
+  },
+  braid: {
+    position: 'absolute',
   },
   face: {
     position: 'absolute',

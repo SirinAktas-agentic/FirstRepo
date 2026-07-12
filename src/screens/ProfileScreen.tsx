@@ -1,20 +1,22 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useApp } from '../context/AppContext';
 import AvatarView from '../components/AvatarView';
 import ProgressBar from '../components/ProgressBar';
 import { computeLevelInfo, levelTitle } from '../lib/gamification';
 import { POINTS_PER_LEVEL } from '../types';
+import { HAIR_COLOR_OPTIONS, HAIR_STYLE_OPTIONS } from '../data/avatarOptions';
 
 export default function ProfileScreen() {
-  const { state } = useApp();
+  const { state, updateAvatar } = useApp();
   const { totalPoints, completedCount } = state.gamification;
   const { level, progress, pointsToNext } = computeLevelInfo(totalPoints);
+  const { avatar } = state;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.avatarCard}>
-        <AvatarView level={level} size={140} />
+        <AvatarView level={level} size={140} avatar={avatar} />
         <Text style={styles.name}>{state.settings.childName}</Text>
         <Text style={styles.levelLabel}>
           Seviye {level} · {levelTitle(level)}
@@ -39,6 +41,47 @@ export default function ProfileScreen() {
         <View style={styles.statCard}>
           <Text style={styles.statValue}>{level}</Text>
           <Text style={styles.statLabel}>Seviye</Text>
+        </View>
+      </View>
+
+      <View style={styles.customizeCard}>
+        <Text style={styles.customizeTitle}>Avatarını Özelleştir</Text>
+
+        <Text style={styles.customizeLabel}>Saç Rengi</Text>
+        <View style={styles.swatchRow}>
+          {HAIR_COLOR_OPTIONS.map((option) => {
+            const selected = option.value === avatar.hairColor;
+            return (
+              <Pressable
+                key={option.value}
+                accessibilityLabel={option.label}
+                onPress={() => updateAvatar({ ...avatar, hairColor: option.value })}
+                style={[
+                  styles.swatch,
+                  { backgroundColor: option.value },
+                  selected && styles.swatchSelected,
+                ]}
+              >
+                {selected ? <Text style={styles.swatchCheck}>✓</Text> : null}
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <Text style={styles.customizeLabel}>Saç Stili</Text>
+        <View style={styles.pillRow}>
+          {HAIR_STYLE_OPTIONS.map((option) => {
+            const selected = option.value === avatar.hairStyle;
+            return (
+              <Pressable
+                key={option.value}
+                onPress={() => updateAvatar({ ...avatar, hairStyle: option.value })}
+                style={[styles.pill, selected && styles.pillSelected]}
+              >
+                <Text style={[styles.pillText, selected && styles.pillTextSelected]}>{option.label}</Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
 
@@ -117,6 +160,70 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginTop: 2,
     textAlign: 'center',
+  },
+  customizeCard: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#F1E9FF',
+    gap: 4,
+  },
+  customizeTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4C1D95',
+    marginBottom: 6,
+  },
+  customizeLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6B7280',
+    marginTop: 10,
+    marginBottom: 8,
+  },
+  swatchRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  swatch: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  swatchSelected: {
+    borderColor: '#1F2937',
+  },
+  swatchCheck: {
+    color: 'white',
+    fontWeight: '800',
+  },
+  pillRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  pill: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+  },
+  pillSelected: {
+    backgroundColor: '#7C3AED',
+  },
+  pillText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#6B7280',
+  },
+  pillTextSelected: {
+    color: 'white',
   },
   infoCard: {
     backgroundColor: 'white',

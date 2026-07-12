@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 import AvatarView from './AvatarView';
-import { MotivationEvent } from '../types';
+import { AvatarConfig, MotivationEvent } from '../types';
 
 interface MotivationOverlayProps {
   event: MotivationEvent | null;
   level: number;
+  avatar: AvatarConfig;
   onDismiss: () => void;
 }
 
-export default function MotivationOverlay({ event, level, onDismiss }: MotivationOverlayProps) {
+export default function MotivationOverlay({ event, level, avatar, onDismiss }: MotivationOverlayProps) {
   useEffect(() => {
     if (!event) return;
     const timeout = setTimeout(onDismiss, event.leveledUp ? 3200 : 2000);
@@ -20,7 +21,7 @@ export default function MotivationOverlay({ event, level, onDismiss }: Motivatio
     <Modal visible={!!event} transparent animationType="fade">
       <View style={styles.backdrop}>
         <View style={[styles.card, event?.leveledUp && styles.cardLevelUp]}>
-          <AvatarView level={level} size={90} />
+          <AvatarView level={level} size={90} avatar={avatar} />
           {event?.leveledUp ? <Text style={styles.levelBadge}>Seviye {event.newLevel}!</Text> : null}
           <Text style={styles.message}>{event?.message}</Text>
         </View>

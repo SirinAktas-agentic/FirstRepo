@@ -41,7 +41,12 @@ function AppShell() {
         })}
       </View>
 
-      <MotivationOverlay event={motivationEvent} level={level} onDismiss={clearMotivationEvent} />
+      <MotivationOverlay
+        event={motivationEvent}
+        level={level}
+        avatar={state.avatar}
+        onDismiss={clearMotivationEvent}
+      />
       <StatusBar style="dark" />
     </SafeAreaView>
   );
