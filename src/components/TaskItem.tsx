@@ -13,7 +13,13 @@ const SUBJECT_COLORS: Record<string, string> = {
   'Fen Bilimleri': '#16A34A',
   'Sosyal Bilgiler': '#D97706',
   İngilizce: '#0EA5E9',
+  İspanyolca: '#B45309',
   'Din Kültürü ve Ahlak Bilgisi': '#7C3AED',
+  'Bilişim Teknolojileri ve Yazılım': '#0891B2',
+  'Görsel Sanatlar': '#C026D3',
+  Müzik: '#4338CA',
+  'Beden Eğitimi ve Spor': '#65A30D',
+  Rehberlik: '#F97316',
   Etkinlik: '#F97316',
 };
 

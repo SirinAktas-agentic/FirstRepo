@@ -3,15 +3,17 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { AppProvider, useApp } from './src/context/AppContext';
 import AgendaScreen from './src/screens/AgendaScreen';
+import ReadingListScreen from './src/screens/ReadingListScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import MotivationOverlay from './src/components/MotivationOverlay';
 import { computeLevelInfo } from './src/lib/gamification';
 
-type Tab = 'agenda' | 'profile' | 'settings';
+type Tab = 'agenda' | 'reading' | 'profile' | 'settings';
 
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: 'agenda', label: 'Ajanda', icon: '🗓️' },
+  { key: 'reading', label: 'Okuma', icon: '📚' },
   { key: 'profile', label: 'Mine', icon: '⭐' },
   { key: 'settings', label: 'Ayarlar', icon: '⚙️' },
 ];
@@ -25,6 +27,7 @@ function AppShell() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.screenArea}>
         {tab === 'agenda' && <AgendaScreen />}
+        {tab === 'reading' && <ReadingListScreen />}
         {tab === 'profile' && <ProfileScreen />}
         {tab === 'settings' && <SettingsScreen />}
       </View>
@@ -41,7 +44,12 @@ function AppShell() {
         })}
       </View>
 
-      <MotivationOverlay event={motivationEvent} level={level} onDismiss={clearMotivationEvent} />
+      <MotivationOverlay
+        event={motivationEvent}
+        level={level}
+        avatar={state.avatar}
+        onDismiss={clearMotivationEvent}
+      />
       <StatusBar style="dark" />
     </SafeAreaView>
   );

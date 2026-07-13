@@ -1,6 +1,6 @@
 import { AgendaTask, WeekPlan } from '../types';
 import { SUBJECT_ORDER, SUBJECT_TASKS, SubjectName, nextSubjectsForWeekdayIndex } from '../data/subjects';
-import { WEEKEND_ACTIVITIES } from '../data/activities';
+import { WEEKEND_ACTIVITIES, WeekendActivity } from '../data/activities';
 import { addDays, compareISO, isWeekendDate, parseISODate, startOfWeekMonday } from './dateUtils';
 
 function shuffle<T>(items: T[]): T[] {
@@ -38,7 +38,7 @@ export function generateSchedule(
   const subjectCyclers = Object.fromEntries(
     SUBJECT_ORDER.map((subject) => [subject, createCycler(SUBJECT_TASKS[subject])]),
   ) as Record<SubjectName, () => { title: string }>;
-  const activityCycler = createCycler(WEEKEND_ACTIVITIES);
+  const activityCycler = createCycler<WeekendActivity>(WEEKEND_ACTIVITIES);
 
   const weekStarts = new Set<string>();
   let cursor = startDate;
@@ -48,14 +48,14 @@ export function generateSchedule(
 
     if (isWeekendDate(cursor)) {
       for (let i = 0; i < 3; i++) {
-        const title = activityCycler();
+        const activity = activityCycler();
         const id = makeTaskId(cursor);
         tasks[id] = {
           id,
           date: cursor,
           originalDate: cursor,
-          subject: 'Etkinlik',
-          title,
+          subject: activity.subject,
+          title: activity.title,
           kind: 'activity',
           completed: false,
           rolledOver: false,

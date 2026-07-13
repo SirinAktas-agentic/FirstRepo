@@ -4,9 +4,10 @@
 
 ## Özellikler
 
-- **Ajanda:** Yaz başlangıcından bitişine kadar her hafta içi günde 3 farklı dersten 30'ar dakikalık ödev, her hafta sonu günü ise 3 eğlenceli etkinlik önerir. Dersler (Türkçe, Matematik, Fen Bilimleri, Sosyal Bilgiler, İngilizce, Din Kültürü ve Ahlak Bilgisi) günler arasında dönüşümlü olarak dağıtılır.
+- **Ajanda:** Yaz başlangıcından bitişine kadar her hafta içi günde 3 farklı dersten 30'ar dakikalık ödev, her hafta sonu günü ise 3 eğlenceli etkinlik önerir. Hafta içi dersler (Türkçe, Matematik, Fen Bilimleri, Sosyal Bilgiler, İngilizce, İspanyolca, Din Kültürü ve Ahlak Bilgisi) günler arasında dönüşümlü dağıtılır; hafta sonu etkinlikleri Rehberlik, Bilişim Teknolojileri, Görsel Sanatlar, Müzik ve Beden Eğitimi bölümlerinden gelir. İçerik, okulun resmi 5.'ten 6.'ya geçiş yaz tatili öneri dokümanlarından türetilmiştir.
+- **Okuma Listesi:** Okulun önerdiği tüm kitaplar (Türkçe, İngilizce, Matematik, Fen Bilimleri, Sosyal Bilgiler, İspanyolca) derse göre gruplanmış halde; zorunlu/seçmeli/serbest etiketiyle ve okundu/okunmadı işaretlenebilen bir liste olarak sunulur.
 - **Tik atma ve puan:** Her tamamlanan ödev/etkinlik 5 puan kazandırır. 30 puanda Mine'nin karakteri seviye atlar.
-- **Avatar & motivasyon:** Her tamamlamada avatar Mine'yi rastgele bir motivasyon mesajıyla kutlar; seviye atlayınca özel bir kutlama ekranı açılır. Avatarın görünümü (saç rengi, aksesuar) seviyeye göre değişir.
+- **Avatar & motivasyon:** Her tamamlamada avatar Mine'yi rastgele bir motivasyon mesajıyla kutlar; seviye atlayınca özel bir kutlama ekranı açılır. Mine, saç rengini ve saç stilini "Mine" sekmesinden kendi seçebilir; seviyeye göre aksesuar (kurdele/gözlük/taç) otomatik eklenir.
 - **Otomatik telafi:** Bir günün ödev/etkinlikleri o gün bitmeden tamamlanmazsa, ertesi günlerde otomatik olarak "telafi" etiketiyle sonraki günlere eklenir; gerekirse ajanda otomatik olarak uzatılır.
 - **Ayarlar:** Çocuğun adı, yazın başlangıç/bitiş tarihleri değiştirilebilir; ilerleme istenirse sıfırlanabilir.
 
@@ -41,10 +42,10 @@ npm run ios       # iOS simülatöründe çalıştırır (yalnızca macOS)
 ```
 App.tsx                  Sekme navigasyonu ve genel yerleşim
 src/types                Ortak veri tipleri
-src/data                 Ders ödevi ve etkinlik içerik havuzları
+src/data                 Ders ödevi, etkinlik ve okuma listesi içerik havuzları
 src/lib                  Tarih yardımcıları, ajanda üretimi, telafi mantığı, puanlama, depolama
 src/context/AppContext   Uygulama durumu (React Context), AsyncStorage ile kalıcı saklama
-src/screens              Ajanda, Profil (avatar/seviye) ve Ayarlar ekranları
+src/screens              Ajanda, Okuma Listesi, Profil (avatar/seviye) ve Ayarlar ekranları
 src/components           Avatar, görev satırı, gün kartı, ilerleme çubuğu, motivasyon kutlaması
 ```
 
