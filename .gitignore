@@ -9,6 +9,9 @@ dist/
 web-build/
 expo-env.d.ts
 
+# Generated single-file web build used to publish the live demo Artifact
+mine-app-artifact.html
+
 # Native
 .kotlin/
 *.orig.*
