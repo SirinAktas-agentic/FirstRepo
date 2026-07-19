@@ -1,25 +1,14 @@
 {
-  "name": "firstrepo",
-  "version": "1.0.0",
-  "main": "index.ts",
-  "dependencies": {
-    "@react-native-async-storage/async-storage": "2.2.0",
-    "expo": "56.0.15",
-    "expo-status-bar": "~56.0.4",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-native": "0.85.3",
-    "react-native-web": "~0.21.0"
-  },
-  "devDependencies": {
-    "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+  "name": "mine-yaz-ajandasi",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mine'nin Yaz Ajandası — SQLite tabanlı, sunucuda çalışan 6. sınıf yaz ödev/etkinlik takip uygulaması. Harici bağımlılık yok (Node yerleşik http + sqlite).",
+  "engines": {
+    "node": ">=22.5.0"
   },
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
-  },
-  "private": true
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  }
 }

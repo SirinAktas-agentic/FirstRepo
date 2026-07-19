@@ -1,52 +1,88 @@
 # Mine'nin Yaz Ajandası
 
-6. sınıfa geçen Mine için yaz tatili boyunca ödev ve etkinlikleri takip eden, oyunlaştırılmış bir mobil uygulama (Expo / React Native + TypeScript).
+6. sınıfa geçen Mine için yaz tatili boyunca ödev ve etkinlikleri takip eden,
+oyunlaştırılmış bir web uygulaması. Tüm veriler **SQLite** veritabanında yaşar;
+uygulama kendi bilgisayarında ya da taşıdığın herhangi bir sunucuda çalışır.
+
+## Neden bu mimari?
+
+- **Veritabanı (SQLite):** İçerik (dersler, ödevler, etkinlikler, okuma listesi)
+  ve durum (tikler, puan, seviye, avatar) tek bir `data/mine.db` dosyasında
+  tutulur. Uygulamayı geliştirmek için veriyi "derlemek" gerekmez; veri koda
+  gömülü değildir.
+- **Sıfır bağımlılık, sıfır derleme:** Sunucu yalnızca Node'un yerleşik
+  `node:http` ve `node:sqlite` modüllerini kullanır. `npm install` hiçbir şey
+  indirmez/derlemez. Tek gereksinim: **Node.js 22.5 veya üstü**.
+- **Taşınabilir:** Klasörü (ve istersen `data/mine.db` dosyasını) herhangi bir
+  sunucuya kopyala, `npm start` de; çalışır.
 
 ## Özellikler
 
-- **Ajanda:** Yaz başlangıcından bitişine kadar her hafta içi günde 3 farklı dersten 30'ar dakikalık ödev, her hafta sonu günü ise 3 eğlenceli etkinlik önerir. Hafta içi dersler (Türkçe, Matematik, Fen Bilimleri, Sosyal Bilgiler, İngilizce, İspanyolca, Din Kültürü ve Ahlak Bilgisi) günler arasında dönüşümlü dağıtılır; hafta sonu etkinlikleri Rehberlik, Bilişim Teknolojileri, Görsel Sanatlar, Müzik ve Beden Eğitimi bölümlerinden gelir. İçerik, okulun resmi 5.'ten 6.'ya geçiş yaz tatili öneri dokümanlarından türetilmiştir.
-- **Okuma Listesi:** Okulun önerdiği tüm kitaplar (Türkçe, İngilizce, Matematik, Fen Bilimleri, Sosyal Bilgiler, İspanyolca) derse göre gruplanmış halde; zorunlu/seçmeli/serbest etiketiyle ve okundu/okunmadı işaretlenebilen bir liste olarak sunulur.
-- **Tik atma ve puan:** Her tamamlanan ödev/etkinlik 5 puan kazandırır. 30 puanda Mine'nin karakteri seviye atlar.
-- **Avatar & motivasyon:** Her tamamlamada avatar Mine'yi rastgele bir motivasyon mesajıyla kutlar; seviye atlayınca özel bir kutlama ekranı açılır. Mine, saç rengini ve saç stilini "Mine" sekmesinden kendi seçebilir; seviyeye göre aksesuar (kurdele/gözlük/taç) otomatik eklenir.
-- **Otomatik telafi:** Bir günün ödev/etkinlikleri o gün bitmeden tamamlanmazsa, ertesi günlerde otomatik olarak "telafi" etiketiyle sonraki günlere eklenir; gerekirse ajanda otomatik olarak uzatılır.
-- **Ayarlar:** Çocuğun adı, yazın başlangıç/bitiş tarihleri değiştirilebilir; ilerleme istenirse sıfırlanabilir.
+- **Ajanda:** Hafta içi her gün 3 farklı dersten 30'ar dakikalık ödev, hafta
+  sonu her gün 3 etkinlik. İçerik okulun resmi 5.'ten 6.'ya geçiş yaz tatili
+  öneri dosyalarından türetilmiştir (Türkçe, Matematik, Fen, Sosyal, İngilizce,
+  İspanyolca, Din Kültürü; hafta sonu: Rehberlik, Bilişim, Görsel Sanatlar,
+  Müzik, Beden Eğitimi).
+- **Okuma Listesi:** Tüm derslerin önerilen kitapları; zorunlu/seçmeli/serbest
+  etiketleriyle, okundu/okunmadı işaretlemeli.
+- **Puan & seviye:** Her tamamlanan görev 5 puan; 30 puanda seviye atlama.
+- **Avatar:** Mine'yi temsil eden, saç rengi/stili özelleştirilebilen avatar;
+  her tamamlamada motivasyon, seviye atlamada özel kutlama.
+- **Otomatik telafi:** O gün bitmeyen görevler sonraki günlere taşınır.
 
 ## Çalıştırma
 
-Uygulama en sorunsuz şekilde **bilgisayarın tarayıcısında** çalışır (mobil cihazda Expo Go sürüm uyumluluğu sorunlarıyla uğraşmamak için önerilen yol budur).
+Node.js 22.5+ kurulu olmalı ([nodejs.org](https://nodejs.org) → LTS sürümü).
 
 ### Windows'ta kolay yol (terminal bilmeden)
 
-1. Bu klasörü indirip aç.
+1. Bu klasörü indir/aç.
 2. İçindeki **`calistir.bat`** dosyasına çift tıkla.
-3. Node.js kurulu değilse ekrandaki uyarıyı takip ederek [nodejs.org](https://nodejs.org)'dan LTS sürümünü kur, sonra dosyaya tekrar çift tıkla.
-4. Kurulum bitince tarayıcında otomatik olarak bir sekme açılacak (açılmazsa `http://localhost:8081` adresine git). Pencereyi kapatmadığın sürece uygulama açık kalır.
+3. Tarayıcın otomatik açılmazsa `http://localhost:8080` adresine git.
 
-### Terminalden manuel çalıştırma
-
-```bash
-npm install
-npm run web       # Tarayıcıda açar (http://localhost:8081)
-```
-
-Mobil cihazda Expo Go ile denemek istersen (mağazadaki Expo Go sürümüyle projenin Expo SDK sürümü eşleşmelidir):
+### Terminalden
 
 ```bash
-npm start         # QR kod ile Expo Go üzerinden çalıştırır
-npm run android   # Android emülatöründe çalıştırır
-npm run ios       # iOS simülatöründe çalıştırır (yalnızca macOS)
+npm start
 ```
+
+Ardından tarayıcıdan `http://localhost:8080` adresini aç. Pencereyi kapatana
+kadar (ya da Ctrl+C'ye basana kadar) sunucu çalışır.
+
+### Ortam değişkenleri
+
+| Değişken  | Varsayılan          | Açıklama                          |
+| --------- | ------------------- | --------------------------------- |
+| `PORT`    | `8080`              | Sunucunun dinleyeceği port        |
+| `HOST`    | `0.0.0.0`           | Dinlenecek adres                  |
+| `DB_PATH` | `data/mine.db`      | SQLite veritabanı dosyasının yolu |
+
+Örnek: `PORT=3000 DB_PATH=/veri/mine.db npm start`
+
+## Veriyi yedekleme / taşıma
+
+Tüm veri `data/mine.db` dosyasındadır. Yedeklemek için bu dosyayı kopyalaman
+yeterli; başka bir sunucuya taşımak için de dosyayı oraya kopyalayıp
+`DB_PATH` ile göster.
 
 ## Proje yapısı
 
 ```
-App.tsx                  Sekme navigasyonu ve genel yerleşim
-src/types                Ortak veri tipleri
-src/data                 Ders ödevi, etkinlik ve okuma listesi içerik havuzları
-src/lib                  Tarih yardımcıları, ajanda üretimi, telafi mantığı, puanlama, depolama
-src/context/AppContext   Uygulama durumu (React Context), AsyncStorage ile kalıcı saklama
-src/screens              Ajanda, Okuma Listesi, Profil (avatar/seviye) ve Ayarlar ekranları
-src/components           Avatar, görev satırı, gün kartı, ilerleme çubuğu, motivasyon kutlaması
+server/
+  index.js       HTTP sunucusu + REST API + statik dosya servisi
+  db.js          SQLite şeması, tohumlama, tüm veri işlemleri
+  logic.js       Tarih yardımcıları, ajanda üretimi, telafi, seviye hesabı
+  seed-data.js   İlk kurulumda veritabanına yazılan içerik (dersler, kitaplar…)
+public/
+  index.html     Uygulama kabuğu
+  styles.css     Stiller (mor temalı, mobil öncelikli)
+  app.js         Arayüz mantığı (4 sekme, avatar, etkileşimler)
+data/
+  mine.db        SQLite veritabanı (çalışma anında oluşur; git'e girmez)
 ```
 
-Veriler cihazda `@react-native-async-storage/async-storage` ile saklanır; bir backend gerekmez.
+## Önceki sürüm
+
+Veritabanısız, Expo/React Native tabanlı ilk sürüm
+`restore/v1.0-expo-inmemory` dalında saklıdır; `git checkout
+restore/v1.0-expo-inmemory` ile o hale dönülebilir.
