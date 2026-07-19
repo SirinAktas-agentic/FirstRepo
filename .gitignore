@@ -1,44 +1,23 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
+# Bağımlılıklar (uygulamanın harici bağımlılığı yoktur; yalnızca test araçları buraya kurulabilir)
 node_modules/
 
-# Expo
-.expo/
+# Eski Expo derleme çıktıları (artık kullanılmıyor; yanlışlıkla üretilirse depoya girmesin)
 dist/
+.expo/
 web-build/
-expo-env.d.ts
 
-# Generated single-file web build used to publish the live demo Artifact
-mine-app-artifact.html
+# SQLite veritabanı dosyaları — çalışma anında oluşur, kullanıcı verisidir, depoya girmez
+data/*.db
+data/*.db-wal
+data/*.db-shm
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Metro
-.metro-health-check*
+# Ortam / editör
+.env
+.env*.local
+.DS_Store
+*.pem
 
 # debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-# generated native folders
-/ios
-/android

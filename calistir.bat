@@ -1,44 +1,35 @@
 @echo off
-title Mine'nin Yaz Ajandasi - Kuruluyor
+title Mine'nin Yaz Ajandasi
 cd /d "%~dp0"
 
 echo ============================================
-echo  Mine'nin Yaz Ajandasi hazirlaniyor
-echo  Bu islem birkac dakika surebilir, lutfen
-echo  pencereyi kapatmadan bekleyin.
+echo  Mine'nin Yaz Ajandasi baslatiliyor...
 echo ============================================
 echo.
 
-where npm >nul 2>nul
+where node >nul 2>nul
 if errorlevel 1 (
-  echo HATA: npm bulunamadi.
-  echo Once Node.js kurmaniz gerekiyor: https://nodejs.org adresinden
-  echo "LTS" surumunu indirip kurun, sonra bu dosyaya tekrar cift tiklayin.
+  echo HATA: Node.js bulunamadi.
+  echo https://nodejs.org adresinden "LTS" surumunu (22 veya ustu) indirip
+  echo kurun, sonra bu dosyaya tekrar cift tiklayin.
   echo.
   pause
   exit /b 1
 )
 
-call npm install
-if errorlevel 1 (
-  echo.
-  echo HATA: Kurulum sirasinda bir sorun olustu. Yukaridaki mesajlari
-  echo kontrol edin ya da bu ekrani Claude'a gonderin.
-  echo.
-  pause
-  exit /b 1
-)
-
+echo Uygulama basladiktan sonra tarayicinizi acip su adrese gidin:
 echo.
-echo Kurulum tamamlandi. Uygulama tarayicida baslatiliyor...
-echo Birazdan bilgisayarinizin tarayicisinda (Chrome/Edge) otomatik
-echo olarak bir sekme acilacak. Acilmazsa http://localhost:8081
-echo adresini tarayiciya elle yazabilirsiniz.
+echo     http://localhost:8080
 echo.
-echo Bu pencereyi KAPATMAYIN - uygulama acikken bu pencere de acik
-echo kalmali. Uygulamayi kapatmak icin bu pencerede Ctrl+C'ye basin.
+echo Bu pencereyi KAPATMAYIN - uygulama acikken acik kalmali.
+echo Durdurmak icin bu pencerede Ctrl+C'ye basin.
 echo.
 
-call npx expo start --web
+REM Tarayiciyi birkac saniye sonra otomatik ac
+start "" /b cmd /c "timeout /t 3 >nul & start http://localhost:8080"
 
+node server\index.js
+
+echo.
+echo Sunucu durdu.
 pause
