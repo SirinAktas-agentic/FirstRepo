@@ -198,3 +198,10 @@ body {
 @media (prefers-reduced-motion: reduce) { .overlay-card { animation: none; } .progress-fill { transition: none; } }
 
 .loading { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--accent-deep); font-size: 15px; }
+
+/* ---- Yedekleme (statik/PWA sürümü) ---- */
+.secondary-btn {
+  width: 100%; background: none; color: var(--accent); border: 1.5px solid var(--accent);
+  border-radius: 14px; padding: 14px; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 10px;
+}
+.secondary-btn:active { background: #f5f0ff; }

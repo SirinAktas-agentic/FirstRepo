@@ -10,14 +10,14 @@ echo.
 where node >nul 2>nul
 if errorlevel 1 (
   echo HATA: Node.js bulunamadi.
-  echo https://nodejs.org adresinden "LTS" surumunu (22 veya ustu) indirip
-  echo kurun, sonra bu dosyaya tekrar cift tiklayin.
+  echo https://nodejs.org adresinden "LTS" surumunu indirip kurun,
+  echo sonra bu dosyaya tekrar cift tiklayin.
   echo.
   pause
   exit /b 1
 )
 
-echo Uygulama basladiktan sonra tarayicinizi acip su adrese gidin:
+echo Uygulama basladiktan sonra tarayicinizda su adres acilacak:
 echo.
 echo     http://localhost:8080
 echo.
@@ -28,7 +28,7 @@ echo.
 REM Tarayiciyi birkac saniye sonra otomatik ac
 start "" /b cmd /c "timeout /t 3 >nul & start http://localhost:8080"
 
-node server\index.js
+node scripts\serve.js
 
 echo.
 echo Sunucu durdu.
