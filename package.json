@@ -1,14 +1,13 @@
 {
   "name": "mine-yaz-ajandasi",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
-  "description": "Mine'nin Yaz Ajandası — SQLite tabanlı, sunucuda çalışan 6. sınıf yaz ödev/etkinlik takip uygulaması. Harici bağımlılık yok (Node yerleşik http + sqlite).",
+  "description": "Mine'nin Yaz Ajandası — tamamen statik, sunucusuz/veritabanısız PWA. Veriler cihazın kendi deposunda (localStorage) tutulur; iPhone/iPad'de 'Ana Ekrana Ekle' ile uygulama gibi çalışır.",
   "engines": {
-    "node": ">=22.5.0"
+    "node": ">=18"
   },
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "start": "node scripts/serve.js"
   }
 }

@@ -1,38 +1,43 @@
 # Mine'nin Yaz Ajandası — mimari ve kurallar
 
-Bu proje, veritabanı tabanlı bir web uygulamasıdır. (Önceki Expo/React Native
-sürümü `restore/v1.0-expo-inmemory` dalında saklıdır.)
+Bu proje, **tamamen statik, sunucusuz/veritabanısız bir PWA'dır** (v3).
+Önceki sürümler geri dönüş dalı olarak saklıdır:
+
+- `restore/v1.0-expo-inmemory` — Expo/React Native sürümü
+- `restore/v2.0-sqlite-server` — Node + SQLite sunucu sürümü
 
 ## Yığın (stack)
 
-- **Sunucu:** Yalnızca Node.js yerleşik modülleri — `node:http` (sunucu) ve
-  `node:sqlite` (veritabanı). **Harici çalışma bağımlılığı yoktur**, native
-  derleme yoktur. Gereken tek şey Node **>= 22.5**.
-- **Veritabanı:** Tek bir SQLite dosyası (`data/mine.db`). Tüm içerik ve
-  kullanıcı durumu buradadır; dosyayı taşımak veriyi taşır.
-- **Arayüz:** `public/` altında derleme gerektirmeyen düz HTML/CSS/JS
-  (`index.html`, `styles.css`, `app.js`). Build adımı yoktur.
+- **Uygulama:** `docs/` altında derleme gerektirmeyen düz HTML/CSS/JS.
+  Build adımı, bağımlılık, sunucu ve veritabanı YOKTUR.
+- **Kalıcılık:** Tüm kullanıcı durumu (ajanda, tikler, puan, avatar, okuma
+  işaretleri) cihazın kendi deposunda — `localStorage` (`docs/store.js`).
+- **PWA:** `manifest.webmanifest` + `sw.js` (çevrimdışı çalışma) + iPhone
+  "Ana Ekrana Ekle" meta etiketleri. iPhone/iPad'de uygulama gibi çalışır.
+- **Yayın:** GitHub Pages (main dalı, `/docs` klasörü) ya da herhangi bir
+  statik dosya sunucusu. Yerelde: `npm start` (scripts/serve.js).
 
 ## Önemli veri kuralı (kullanıcı isteği)
 
-**Veri, sıra ve yapı SQLite'ta yaşar ve kullanıcı açıkça istemedikçe
-DEĞİŞTİRİLMEZ.** İçerik (dersler, ödevler, etkinlikler, okuma listesi) yalnızca
-veritabanı ilk kez oluşturulurken `server/seed-data.js`'ten tohumlanır. Uygulama
-ne kadar geliştirilirse geliştirilsin:
+**Veri, sıra ve yapı kullanıcı açıkça istemedikçe DEĞİŞTİRİLMEZ.** İçerik
+(dersler, ödevler, etkinlikler, okuma listesi) `docs/data.js`'te yaşar ama
+yalnızca cihazde kayıtlı veri YOKKEN ajanda üretmek için kullanılır; üretilen
+ajanda ve tüm durum localStorage'da sabitlenir. Uygulama ne kadar
+geliştirilirse geliştirilsin:
 
-- Mevcut bir `data/mine.db` varken tohumlama tekrar çalışmaz (tablolar boş
-  değilse atlanır); yani sıralama ve içerik korunur.
-- Yeni özellikler eklerken var olan tabloların sıra sütunlarını (`sort_order`,
-  `seq`) ve satır sırasını bozacak şekilde davranma.
-- Şema değişikliği gerekiyorsa geriye dönük uyumlu, katıcı (additive) migration
-  yaz; mevcut kullanıcı verisini silme.
+- `docs/data.js`'i değiştirmek mevcut kullanıcıların verisini/sırasını
+  DEĞİŞTİRMEZ (yeniden üretim yalnızca kullanıcı Ayarlar'dan isterse olur).
+- localStorage şemasını bozacak değişiklik yapma; gerekiyorsa geriye dönük
+  uyumlu taşıma (migration) kodu yaz, mevcut veriyi silme.
+- `sw.js` içindeki `CACHE_VERSION` her yayınla birlikte artırılmalı, yoksa
+  kullanıcılar eski sürümü görmeye devam eder.
 
 ## Çalıştırma
 
 ```
-npm start          # sunucuyu başlatır → http://localhost:8080
+npm start          # yerel: http://localhost:8080 (docs/ klasörünü sunar)
 ```
 
-Taşınabilirlik: klasörü (ve istenirse `data/mine.db` dosyasını) herhangi bir
-Node 22.5+ sunucuya kopyala, `npm start` ile çalışır. `PORT` ve `DB_PATH`
-ortam değişkenleriyle özelleştirilebilir.
+Yayın için: GitHub → Settings → Pages → "Deploy from a branch" → `main` +
+`/docs` seçilir; uygulama `https://<kullanıcı>.github.io/FirstRepo/` adresinde
+yayınlanır. iPhone/iPad'de Safari ile açıp **Paylaş → Ana Ekrana Ekle**.

@@ -1,88 +1,80 @@
 # Mine'nin Yaz Ajandası
 
 6. sınıfa geçen Mine için yaz tatili boyunca ödev ve etkinlikleri takip eden,
-oyunlaştırılmış bir web uygulaması. Tüm veriler **SQLite** veritabanında yaşar;
-uygulama kendi bilgisayarında ya da taşıdığın herhangi bir sunucuda çalışır.
+oyunlaştırılmış bir uygulama. **Tamamen statiktir**: sunucu ve veritabanı
+gerekmez, tüm veriler telefonun/bilgisayarın kendi deposunda saklanır.
+iPhone/iPad'de **"Ana Ekrana Ekle"** ile gerçek bir uygulama gibi (kendi
+ikonuyla, tam ekran, internetsiz bile) çalışır.
 
-## Neden bu mimari?
+## iPhone / iPad'e kurulum (App Store'suz, ücretsiz)
 
-- **Veritabanı (SQLite):** İçerik (dersler, ödevler, etkinlikler, okuma listesi)
-  ve durum (tikler, puan, seviye, avatar) tek bir `data/mine.db` dosyasında
-  tutulur. Uygulamayı geliştirmek için veriyi "derlemek" gerekmez; veri koda
-  gömülü değildir.
-- **Sıfır bağımlılık, sıfır derleme:** Sunucu yalnızca Node'un yerleşik
-  `node:http` ve `node:sqlite` modüllerini kullanır. `npm install` hiçbir şey
-  indirmez/derlemez. Tek gereksinim: **Node.js 22.5 veya üstü**.
-- **Taşınabilir:** Klasörü (ve istersen `data/mine.db` dosyasını) herhangi bir
-  sunucuya kopyala, `npm start` de; çalışır.
+1. GitHub'da **Settings → Pages** bölümünden yayını bir kez etkinleştir:
+   "Deploy from a branch" → Branch: `main`, Folder: `/docs` → Save.
+2. Birkaç dakika sonra uygulama şu adreste yayında olur:
+   `https://<github-kullanıcı-adın>.github.io/FirstRepo/`
+3. iPhone/iPad'de **Safari** ile bu adresi aç.
+4. **Paylaş** düğmesi (kare + yukarı ok) → **Ana Ekrana Ekle** → Ekle.
+
+Artık ana ekranda "Mine Ajanda" ikonu var; dokununca tam ekran, uygulama gibi
+açılır ve ilk açılıştan sonra **internet olmadan da çalışır**. Tüm ilerleme
+(tikler, puanlar, avatar) cihazın kendi deposunda tutulur.
+
+> **.ipa hakkında not:** Apple, imzasız .ipa dosyalarının iPhone'a
+> kurulmasına izin vermez; imzalama için ücretli Apple Developer hesabı
+> (99 USD/yıl) gerekir. Bu yüzden bu proje, Apple hesabı gerektirmeyen
+> PWA (ana ekran uygulaması) yolunu kullanır. Developer hesabı edinilirse
+> .ipa üreten bir GitHub Actions hattı eklenebilir.
 
 ## Özellikler
 
 - **Ajanda:** Hafta içi her gün 3 farklı dersten 30'ar dakikalık ödev, hafta
   sonu her gün 3 etkinlik. İçerik okulun resmi 5.'ten 6.'ya geçiş yaz tatili
-  öneri dosyalarından türetilmiştir (Türkçe, Matematik, Fen, Sosyal, İngilizce,
-  İspanyolca, Din Kültürü; hafta sonu: Rehberlik, Bilişim, Görsel Sanatlar,
-  Müzik, Beden Eğitimi).
+  öneri dosyalarından türetilmiştir (7 ders + Rehberlik, Bilişim, Görsel
+  Sanatlar, Müzik, Beden Eğitimi etkinlikleri).
 - **Okuma Listesi:** Tüm derslerin önerilen kitapları; zorunlu/seçmeli/serbest
   etiketleriyle, okundu/okunmadı işaretlemeli.
 - **Puan & seviye:** Her tamamlanan görev 5 puan; 30 puanda seviye atlama.
-- **Avatar:** Mine'yi temsil eden, saç rengi/stili özelleştirilebilen avatar;
-  her tamamlamada motivasyon, seviye atlamada özel kutlama.
+- **Avatar:** Saç rengi/stili özelleştirilebilen avatar; her tamamlamada
+  motivasyon mesajı, seviye atlamada özel kutlama.
 - **Otomatik telafi:** O gün bitmeyen görevler sonraki günlere taşınır.
+- **Yedekleme:** Ayarlar sekmesinden verileri dosya olarak indirip başka
+  cihazda geri yükleyebilirsin.
 
-## Çalıştırma
+## Bilgisayarda çalıştırma
 
-Node.js 22.5+ kurulu olmalı ([nodejs.org](https://nodejs.org) → LTS sürümü).
+Node.js kuruluysa: `npm start` → `http://localhost:8080`
+(Windows'ta `calistir.bat`'a çift tıklamak da aynı işi yapar.)
 
-### Windows'ta kolay yol (terminal bilmeden)
+Uygulama statik olduğu için aslında herhangi bir statik dosya sunucusu da
+yeterlidir; `docs/` klasörünü herhangi bir hosting'e koyman yeterli.
 
-1. Bu klasörü indir/aç.
-2. İçindeki **`calistir.bat`** dosyasına çift tıkla.
-3. Tarayıcın otomatik açılmazsa `http://localhost:8080` adresine git.
+## Veriler nerede?
 
-### Terminalden
-
-```bash
-npm start
-```
-
-Ardından tarayıcıdan `http://localhost:8080` adresini aç. Pencereyi kapatana
-kadar (ya da Ctrl+C'ye basana kadar) sunucu çalışır.
-
-### Ortam değişkenleri
-
-| Değişken  | Varsayılan          | Açıklama                          |
-| --------- | ------------------- | --------------------------------- |
-| `PORT`    | `8080`              | Sunucunun dinleyeceği port        |
-| `HOST`    | `0.0.0.0`           | Dinlenecek adres                  |
-| `DB_PATH` | `data/mine.db`      | SQLite veritabanı dosyasının yolu |
-
-Örnek: `PORT=3000 DB_PATH=/veri/mine.db npm start`
-
-## Veriyi yedekleme / taşıma
-
-Tüm veri `data/mine.db` dosyasındadır. Yedeklemek için bu dosyayı kopyalaman
-yeterli; başka bir sunucuya taşımak için de dosyayı oraya kopyalayıp
-`DB_PATH` ile göster.
+- İçerik (ders/ödev/etkinlik/kitap listeleri): `docs/data.js` — yalnızca ilk
+  açılışta ajanda üretmek için kullanılır.
+- Kullanıcı durumu (ajanda, tikler, puan, avatar): cihazın tarayıcı deposunda
+  (localStorage). Uygulamayı güncellemek bu veriyi bozmaz.
+- Yedek almak/taşımak için: Ayarlar → "Verileri İndir (yedek)" /
+  "Yedekten Geri Yükle".
 
 ## Proje yapısı
 
 ```
-server/
-  index.js       HTTP sunucusu + REST API + statik dosya servisi
-  db.js          SQLite şeması, tohumlama, tüm veri işlemleri
-  logic.js       Tarih yardımcıları, ajanda üretimi, telafi, seviye hesabı
-  seed-data.js   İlk kurulumda veritabanına yazılan içerik (dersler, kitaplar…)
-public/
-  index.html     Uygulama kabuğu
-  styles.css     Stiller (mor temalı, mobil öncelikli)
-  app.js         Arayüz mantığı (4 sekme, avatar, etkileşimler)
-data/
-  mine.db        SQLite veritabanı (çalışma anında oluşur; git'e girmez)
+docs/
+  index.html          Uygulama kabuğu + PWA meta etiketleri
+  styles.css          Stiller (mor temalı, mobil öncelikli)
+  data.js             İçerik (ilk kurulum tohum verisi)
+  logic.js            Tarih, ajanda üretimi, telafi, seviye hesabı
+  store.js            localStorage kalıcılık katmanı
+  app.js              Arayüz (4 sekme, avatar, etkileşimler)
+  sw.js               Service worker (çevrimdışı çalışma)
+  manifest.webmanifest, icons/   PWA kimliği ve ikonlar
+scripts/serve.js      Yerel çalıştırma için minik statik sunucu
 ```
 
-## Önceki sürüm
+## Önceki sürümler (geri dönüş noktaları)
 
-Veritabanısız, Expo/React Native tabanlı ilk sürüm
-`restore/v1.0-expo-inmemory` dalında saklıdır; `git checkout
-restore/v1.0-expo-inmemory` ile o hale dönülebilir.
+- `restore/v1.0-expo-inmemory` — Expo/React Native sürümü
+- `restore/v2.0-sqlite-server` — Node + SQLite sunucu sürümü
+
+`git checkout <dal-adı>` ile istenen sürüme dönülebilir.

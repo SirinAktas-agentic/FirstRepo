@@ -6,11 +6,6 @@ dist/
 .expo/
 web-build/
 
-# SQLite veritabanı dosyaları — çalışma anında oluşur, kullanıcı verisidir, depoya girmez
-data/*.db
-data/*.db-wal
-data/*.db-shm
-
 # Ortam / editör
 .env
 .env*.local

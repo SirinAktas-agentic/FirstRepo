@@ -5,17 +5,7 @@ const $ = (sel, root = document) => root.querySelector(sel);
 const screen = $('#screen');
 const tabbar = $('#tabbar');
 const overlay = $('#overlay');
-
-const DAY_NAMES_TR = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-const MONTH_NAMES_TR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-
-function parseISO(iso) { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); }
-function addDays(iso, n) { const d = parseISO(iso); d.setDate(d.getDate() + n); return toISO(d); }
-function toISO(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
-function dayName(iso) { return DAY_NAMES_TR[parseISO(iso).getDay()]; }
-function fmtDate(iso) { const d = parseISO(iso); return `${d.getDate()} ${MONTH_NAMES_TR[d.getMonth()]}`; }
-function weekDates(ws) { return Array.from({ length: 7 }, (_, i) => addDays(ws, i)); }
-function weekRange(ws) { return `${fmtDate(ws)} - ${fmtDate(addDays(ws, 6))}`; }
+const L = window.Logic;
 
 const SUBJECT_COLORS = {
   'Türkçe': '#DB2777', 'Matematik': '#2563EB', 'Fen Bilimleri': '#16A34A', 'Sosyal Bilgiler': '#D97706',
@@ -36,12 +26,7 @@ const TABS = [
   { key: 'settings', label: 'Ayarlar', icon: '⚙️' },
 ];
 
-async function api(path, opts) {
-  const res = await fetch(path, opts);
-  if (!res.ok && res.status >= 500) throw new Error('Sunucu hatası');
-  return res.json();
-}
-async function loadState() { state = await api('/api/state'); }
+function refreshState() { state = window.Store.getState(); }
 
 // ---- Avatar (SVG) ----
 function avatarSVG(hairColor, hairStyle, level, size) {
@@ -103,14 +88,14 @@ function renderAgenda() {
   list.className = 'list';
 
   for (const ws of state.weeks) {
-    const dates = weekDates(ws);
+    const dates = L.weekDatesFrom(ws);
     const weekTasks = dates.flatMap((d) => tasksByDate[d] || []);
     if (weekTasks.length === 0) continue;
     const wc = weekTasks.filter((t) => t.completed).length;
 
     const head = document.createElement('div');
     head.className = 'section-head';
-    head.innerHTML = `<span class="st">${weekRange(ws)}</span><span class="sc">${wc}/${weekTasks.length}</span>`;
+    head.innerHTML = `<span class="st">${L.weekRangeLabel(ws)}</span><span class="sc">${wc}/${weekTasks.length}</span>`;
     list.appendChild(head);
 
     for (const date of dates) {
@@ -132,7 +117,7 @@ function dayCard(date, tasks, isToday) {
 
   const head = document.createElement('div');
   head.className = 'dhead';
-  head.innerHTML = `<div><div class="dname">${dayName(date)}${isToday ? ' · Bugün' : ''}</div><div class="ddate">${fmtDate(date)}</div></div>`
+  head.innerHTML = `<div><div class="dname">${L.dayNameTR(date)}${isToday ? ' · Bugün' : ''}</div><div class="ddate">${L.formatDisplayDate(date)}</div></div>`
     + `<div class="status-pill${allDone ? ' done' : ''}">${completed}/${tasks.length}${allDone ? ' 🎉' : ''}</div>`;
   card.appendChild(head);
 
@@ -282,6 +267,12 @@ function renderSettings() {
     + `<div class="field-label-top">Yaz bitişi</div><input class="input" id="set-end" value="${escapeAttr(s.endDate)}" autocapitalize="off" placeholder="2026-09-13" />`
     + `<button class="save-btn" id="set-save">Kaydet ve Ajandayı Oluştur</button>`
     + `<div class="divider"></div>`
+    + `<div class="field-label-top">Yedekleme</div>`
+    + `<p class="helper">Veriler bu cihazın kendi deposunda saklanır. Başka cihaza taşımak ya da güvence için yedek alabilirsin.</p>`
+    + `<button class="secondary-btn" id="set-export">Verileri İndir (yedek)</button>`
+    + `<button class="secondary-btn" id="set-import">Yedekten Geri Yükle</button>`
+    + `<input type="file" id="set-import-file" accept="application/json,.json" style="display:none" />`
+    + `<div class="divider"></div>`
     + `<div class="field-label-top">İlerleme</div>`
     + `<p class="helper">Tarihleri değiştirmeden sadece görev tiklerini sıfırlamak istersen bu butonu kullan. (Okuma listesi işaretlerin korunur.)</p>`
     + `<button class="danger-btn" id="set-reset">İlerlemeyi Sıfırla</button>`;
@@ -289,61 +280,82 @@ function renderSettings() {
 
   $('#set-save').addEventListener('click', onSaveSettings);
   $('#set-reset').addEventListener('click', onReset);
+  $('#set-export').addEventListener('click', onExport);
+  $('#set-import').addEventListener('click', () => $('#set-import-file').click());
+  $('#set-import-file').addEventListener('change', onImportFile);
 }
 
 // ---- Etkileşimler ----
-async function onToggleTask(t) {
-  const res = await api('/api/tasks/' + encodeURIComponent(t.id) + '/toggle', { method: 'POST' });
+function onToggleTask(t) {
+  const res = window.Store.toggleTask(t.id);
   if (res.error) return;
-  const task = state.agenda.find((x) => x.id === t.id);
-  if (task) task.completed = res.task.completed;
-  state.gamification = res.gamification;
+  refreshState();
   render();
   if (res.motivation) showMotivation(res.motivation);
 }
 
-async function onToggleBook(b) {
-  const res = await api('/api/books/' + encodeURIComponent(b.id) + '/toggle', { method: 'POST' });
+function onToggleBook(b) {
+  const res = window.Store.toggleBook(b.id);
   if (res.error) return;
-  const book = state.reading.find((x) => x.id === b.id);
-  if (book) book.read = res.read;
+  refreshState();
   render();
 }
 
-async function onSetAvatar(hairColor, hairStyle) {
-  const res = await api('/api/avatar', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ hairColor, hairStyle }),
-  });
+function onSetAvatar(hairColor, hairStyle) {
+  const res = window.Store.setAvatar(hairColor, hairStyle);
   if (res.error) return;
-  state.avatar = res.avatar;
+  refreshState();
   render();
 }
 
-async function onSaveSettings() {
+function onSaveSettings() {
   const childName = $('#set-name').value;
   const startDate = $('#set-start').value.trim();
   const endDate = $('#set-end').value.trim();
   if (!confirm('Tarih aralığını değiştirmek ajandayı sıfırdan oluşturur ve görev ilerlemesi sıfırlanır. Devam edilsin mi?')) return;
-  const res = await api('/api/settings', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ childName, startDate, endDate }),
-  });
+  const res = window.Store.setSettings(childName, startDate, endDate);
   if (res.error) {
     const msgs = { name_required: 'Lütfen bir isim gir.', bad_date: 'Tarihleri YYYY-AA-GG biçiminde gir (ör. 2026-07-19).', bad_range: 'Bitiş tarihi başlangıçtan sonra olmalı.' };
     alert(msgs[res.error] || 'Bir hata oluştu.');
     return;
   }
-  await loadState();
+  refreshState();
   currentTab = 'agenda';
   render();
 }
 
-async function onReset() {
+function onReset() {
   if (!confirm('Tüm görev tikleri ve puanlar silinecek. Emin misin?')) return;
-  await api('/api/reset', { method: 'POST' });
-  await loadState();
+  window.Store.resetProgress();
+  refreshState();
   render();
+}
+
+function onExport() {
+  const blob = new Blob([window.Store.exportJson()], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mine-yaz-ajandasi-yedek-' + state.today + '.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+function onImportFile(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  if (!confirm('Yedek geri yüklenince buradaki mevcut veriler yedekle DEĞİŞTİRİLİR. Devam edilsin mi?')) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const res = window.Store.importJson(String(reader.result));
+    if (res.error) { alert('Yedek dosyası okunamadı ya da geçersiz.'); return; }
+    refreshState();
+    currentTab = 'agenda';
+    render();
+    alert('Yedek geri yüklendi.');
+  };
+  reader.readAsText(file);
 }
 
 // ---- Motivasyon overlay ----
@@ -382,12 +394,12 @@ function escapeHtml(s) {
 function escapeAttr(s) { return escapeHtml(s); }
 
 // ---- Başlat ----
-(async function init() {
-  screen.innerHTML = '<div class="loading">Mine\'nin ajandası hazırlanıyor...</div>';
-  try {
-    await loadState();
-    render();
-  } catch (e) {
-    screen.innerHTML = '<div class="loading">Yüklenemedi: ' + escapeHtml(String(e.message || e)) + '</div>';
-  }
-})();
+refreshState();
+render();
+
+// PWA: çevrimdışı çalışma için service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
